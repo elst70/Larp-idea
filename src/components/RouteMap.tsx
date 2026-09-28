@@ -170,7 +170,11 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
               <h3 className="font-display text-2xl font-medium">{selectedCityData.countryFlag} {selectedCityData.name}</h3>
               <p className="text-sm text-[var(--color-text-dim)]">{selectedCityData.country}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 justify-end">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary)]/15 rounded-lg">
+                <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                <span className="text-sm font-medium text-[var(--color-primary)]">{formatHours(reachable.find((r) => r.cityId === selectedCity)?.hours ?? 0)} from {startCity.name}</span>
+              </div>
               <div className="flex items-center gap-1 px-3 py-1.5 bg-[var(--color-surface)] rounded-lg">
                 <Star className="w-3.5 h-3.5 text-[var(--color-accent)]" />
                 <span className="text-sm">{selectedCityData.stopRating}/5 stop</span>
