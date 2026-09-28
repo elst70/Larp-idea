@@ -18,11 +18,10 @@ export default function SearchPanel({ onStartSearch, onOpenMap, onOpenSlowTravel
     <div className="w-full max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <h1 className="font-display text-5xl md:text-6xl font-medium tracking-tight mb-4">
-          The slow way<br className="md:hidden" /> across <span className="text-[var(--color-primary)]">Europe</span>
+          Find the best way<br className="md:hidden" /> to travel across <span className="text-[var(--color-primary)]">Europe</span> by train
         </h1>
         <p className="text-[var(--color-text-dim)] text-lg max-w-xl mx-auto">
-          Plan train journeys that are about the ride, not just the destination.
-          Find scenic routes, night trains, and cities worth stopping in.
+          Discover scenic routes, great stopovers and cities worth staying in.
         </p>
       </div>
 
