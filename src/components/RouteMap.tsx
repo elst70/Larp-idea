@@ -1,5 +1,5 @@
 /// <reference types="google.maps" />
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   APIProvider,
   Map as GoogleMap,
@@ -9,7 +9,7 @@ import {
 } from '@vis.gl/react-google-maps';
 import { cityList, type City } from '@/data/cities';
 import { findReachableCities, findRoutes, formatDuration } from '@/lib/routing';
-import { X, Star, Clock, Moon, Train } from 'lucide-react';
+import { X, Star, Moon, Clock, Train } from 'lucide-react';
 
 interface RouteMapProps {
   startCityId: string;
@@ -18,83 +18,45 @@ interface RouteMapProps {
 }
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const MAX_HOURS = 120;
 
-function MapController({ startCity, reachable }: { startCity: City; reachable: { cityId: string; hours: number }[] }) {
+function MapController({ reachable }: { reachable: { cityId: string; hours: number }[] }) {
   const map = useMap();
   useEffect(() => {
     if (!map) return;
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend({ lat: startCity.lat, lng: startCity.lng });
-    reachable.forEach((r) => {
-      const city = cityList.find((c) => c.id === r.cityId);
-      if (city) bounds.extend({ lat: city.lat, lng: city.lng });
-    });
     if (reachable.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      reachable.forEach((r) => {
+        const city = cityList.find((c) => c.id === r.cityId);
+        if (city) bounds.extend({ lat: city.lat, lng: city.lng });
+      });
       map.fitBounds(bounds, 60);
-    } else {
-      map.setCenter({ lat: startCity.lat, lng: startCity.lng });
-      map.setZoom(6);
     }
-  }, [map, startCity, reachable]);
+  }, [map, reachable]);
   return null;
 }
 
-function RouteLines({ startCity, reachable }: { startCity: City; reachable: { cityId: string; hours: number }[] }) {
-  const map = useMap();
-  const polylinesRef = useRef<google.maps.Polyline[]>([]);
-
-  const clearPolylines = useCallback(() => {
-    polylinesRef.current.forEach((p) => p.setMap(null));
-    polylinesRef.current = [];
-  }, []);
-
-  useEffect(() => {
-    if (!map) return;
-    clearPolylines();
-
-    reachable.forEach((r) => {
-      const city = cityList.find((c) => c.id === r.cityId);
-      if (!city) return;
-      const opacity = Math.max(0.2, 1 - r.hours / 24);
-      const polyline = new google.maps.Polyline({
-        path: [
-          { lat: startCity.lat, lng: startCity.lng },
-          { lat: city.lat, lng: city.lng },
-        ],
-        geodesic: true,
-        strokeColor: '#3dd68c',
-        strokeOpacity: opacity,
-        strokeWeight: 2,
-        map,
-      });
-      polylinesRef.current.push(polyline);
-    });
-
-    return clearPolylines;
-  }, [map, startCity, reachable, clearPolylines]);
-  return null;
+function formatHours(hours: number): string {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
 }
 
 export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMapProps) {
-  const [maxDays, setMaxDays] = useState(1);
+  const [maxHours, setMaxHours] = useState(24);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   const reachable = useMemo(() => {
-    return findReachableCities(startCityId, maxDays * 24);
-  }, [startCityId, maxDays]);
-
-  const reachableMap = useMemo(() => {
-    const m = new Map<string, number>();
-    reachable.forEach((r) => m.set(r.cityId, r.hours));
-    return m;
-  }, [reachable]);
+    return findReachableCities(startCityId, maxHours);
+  }, [startCityId, maxHours]);
 
   const startCity = cityList.find((c) => c.id === startCityId)!;
   const selectedCityData = selectedCity ? cityList.find((c) => c.id === selectedCity) : null;
   const routesToSelected = selectedCity ? findRoutes(startCityId, selectedCity) : [];
 
-  const handleCameraChange = useCallback((ev: MapCameraChangedEvent) => {
+  const handleCameraChange = useCallback((_ev: MapCameraChangedEvent) => {
     setMapLoaded(true);
   }, []);
 
@@ -107,7 +69,7 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
               <X className="w-4 h-4" /> Back
             </button>
             <h2 className="font-display text-3xl font-medium">
-              Where can you go from {startCity.name}?
+              Destinations from {startCity.name}
             </h2>
           </div>
         </div>
@@ -132,81 +94,64 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
             <X className="w-4 h-4" /> Back
           </button>
           <h2 className="font-display text-3xl font-medium">
-            Where can you go from {startCity.name}?
+            Destinations from {startCity.name}
           </h2>
-          <p className="text-[var(--color-text-dim)] mt-1">Cities reachable by train within your time budget.</p>
+          <p className="text-[var(--color-text-dim)] mt-1">All cities reachable by train, with travel time shown on each marker.</p>
         </div>
       </div>
 
       <div className="glass rounded-2xl p-4 mb-4 flex items-center gap-4">
         <Clock className="w-5 h-5 text-[var(--color-primary)]" />
-        <span className="text-sm text-[var(--color-text-dim)]">Max travel time:</span>
+        <span className="text-sm text-[var(--color-text-dim)] whitespace-nowrap">Max travel time:</span>
         <input
           type="range"
-          min={1}
-          max={3}
+          min={4}
+          max={MAX_HOURS}
           step={1}
-          value={maxDays}
-          onChange={(e) => setMaxDays(Number(e.target.value))}
+          value={maxHours}
+          onChange={(e) => setMaxHours(Number(e.target.value))}
           className="flex-1 max-w-xs accent-[var(--color-primary)]"
         />
-        <span className="text-sm font-medium w-20">{maxDays} {maxDays === 1 ? 'day' : 'days'}</span>
-        <span className="text-sm text-[var(--color-text-dim)] ml-auto">{reachable.length} cities reachable</span>
+        <span className="text-sm font-medium w-20 whitespace-nowrap">{formatHours(maxHours)}</span>
+        <span className="text-sm text-[var(--color-text-dim)] ml-auto whitespace-nowrap">{reachable.length} destinations</span>
       </div>
 
-      <div className="glass rounded-2xl p-2 overflow-hidden" style={{ height: '520px' }}>
+      <div className="glass rounded-2xl p-2 overflow-hidden" style={{ height: '560px' }}>
         <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
           <GoogleMap
             defaultCenter={{ lat: startCity.lat, lng: startCity.lng }}
-            defaultZoom={6}
+            defaultZoom={5}
             gestureHandling="greedy"
             disableDefaultUI={false}
             mapId="railwander-map"
             onCameraChanged={handleCameraChange}
             style={{ width: '100%', height: '100%', borderRadius: '12px' }}
           >
-            <MapController startCity={startCity} reachable={reachable} />
-            <RouteLines startCity={startCity} reachable={reachable} />
+            <MapController reachable={reachable} />
 
-            {/* Start city marker */}
-            <AdvancedMarker
-              position={{ lat: startCity.lat, lng: startCity.lng }}
-              title={`${startCity.name} (start)`}
-            >
-              <div className="relative flex flex-col items-center">
-                <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] border-2 border-white shadow-lg flex items-center justify-center text-xs font-bold text-[var(--color-bg)]">
-                  {startCity.countryFlag}
-                </div>
-                <div className="mt-1 px-2 py-0.5 rounded bg-[var(--color-bg)]/80 text-xs text-[var(--color-primary)] font-medium whitespace-nowrap">
-                  {startCity.name}
-                </div>
-              </div>
-            </AdvancedMarker>
-
-            {/* Reachable city markers */}
             {reachable.map((r) => {
               const city = cityList.find((c) => c.id === r.cityId);
               if (!city) return null;
               const isSelected = selectedCity === r.cityId;
+              const timeStr = formatHours(r.hours);
               return (
                 <AdvancedMarker
                   key={r.cityId}
                   position={{ lat: city.lat, lng: city.lng }}
-                  title={`${city.name} (${Math.round(r.hours)}h)`}
+                  title={`${city.name} — ${timeStr}`}
                   onClick={() => setSelectedCity(r.cityId)}
                 >
-                  <div className={`relative flex flex-col items-center cursor-pointer transition-all ${isSelected ? 'scale-110' : ''}`}>
+                  <div className={`relative flex flex-col items-center cursor-pointer transition-transform ${isSelected ? 'scale-110' : ''}`}>
                     <div
-                      className={`w-6 h-6 rounded-full border-2 shadow-lg flex items-center justify-center text-[10px] font-bold ${
+                      className={`px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap text-xs font-medium border ${
                         isSelected
-                          ? 'bg-[var(--color-accent)] border-white'
-                          : 'bg-[var(--color-secondary)] border-white/80'
+                          ? 'bg-[var(--color-accent)] border-white text-white'
+                          : 'bg-[var(--color-bg)]/85 border-white/20 text-white'
                       }`}
                     >
-                      <span className="text-white">{city.countryFlag}</span>
-                    </div>
-                    <div className="mt-0.5 px-1.5 py-0.5 rounded bg-[var(--color-bg)]/70 text-[10px] text-white whitespace-nowrap">
-                      {city.name} ({Math.round(r.hours)}h)
+                      <span className="mr-1">{city.countryFlag}</span>
+                      {city.name}
+                      <span className={`ml-1.5 ${isSelected ? 'text-white/80' : 'text-[var(--color-primary)]'}`}>{timeStr}</span>
                     </div>
                   </div>
                 </AdvancedMarker>
@@ -222,7 +167,6 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
         </div>
       )}
 
-      {/* City detail panel */}
       {selectedCityData && (
         <div className="glass rounded-2xl p-6 mt-4 animate-fade-up">
           <div className="flex items-start justify-between mb-4">
