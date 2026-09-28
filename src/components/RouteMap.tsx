@@ -76,13 +76,13 @@ function RouteLines({ startCity, reachable }: { startCity: City; reachable: { ci
 }
 
 export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMapProps) {
-  const [maxHours, setMaxHours] = useState(12);
+  const [maxDays, setMaxDays] = useState(1);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   const reachable = useMemo(() => {
-    return findReachableCities(startCityId, maxHours);
-  }, [startCityId, maxHours]);
+    return findReachableCities(startCityId, maxDays * 24);
+  }, [startCityId, maxDays]);
 
   const reachableMap = useMemo(() => {
     const m = new Map<string, number>();
@@ -143,13 +143,14 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
         <span className="text-sm text-[var(--color-text-dim)]">Max travel time:</span>
         <input
           type="range"
-          min={4}
-          max={24}
-          value={maxHours}
-          onChange={(e) => setMaxHours(Number(e.target.value))}
+          min={1}
+          max={3}
+          step={1}
+          value={maxDays}
+          onChange={(e) => setMaxDays(Number(e.target.value))}
           className="flex-1 max-w-xs accent-[var(--color-primary)]"
         />
-        <span className="text-sm font-medium w-16">{maxHours}h</span>
+        <span className="text-sm font-medium w-20">{maxDays} {maxDays === 1 ? 'day' : 'days'}</span>
         <span className="text-sm text-[var(--color-text-dim)] ml-auto">{reachable.length} cities reachable</span>
       </div>
 
