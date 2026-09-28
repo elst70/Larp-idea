@@ -141,18 +141,14 @@ export default function RouteMap({ startCityId, onBack, onSelectCity }: RouteMap
                   title={`${city.name} — ${timeStr}`}
                   onClick={() => setSelectedCity(r.cityId)}
                 >
-                  <div className={`relative flex flex-col items-center cursor-pointer transition-transform ${isSelected ? 'scale-110' : ''}`}>
+                  <div className={`relative flex flex-col items-center cursor-pointer transition-transform ${isSelected ? 'scale-125' : ''}`}>
                     <div
-                      className={`px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap text-xs font-medium border ${
+                      className={`rounded-full border-2 shadow-lg ${
                         isSelected
-                          ? 'bg-[var(--color-accent)] border-white text-white'
-                          : 'bg-[var(--color-bg)]/85 border-white/20 text-white'
+                          ? 'w-5 h-5 bg-[var(--color-accent)] border-white'
+                          : 'w-3.5 h-3.5 bg-[var(--color-secondary)] border-white/80'
                       }`}
-                    >
-                      <span className="mr-1">{city.countryFlag}</span>
-                      {city.name}
-                      <span className={`ml-1.5 ${isSelected ? 'text-white/80' : 'text-[var(--color-primary)]'}`}>{timeStr}</span>
-                    </div>
+                    />
                   </div>
                 </AdvancedMarker>
               );
