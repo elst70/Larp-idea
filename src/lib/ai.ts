@@ -114,7 +114,7 @@ export function generateAIResponse(
     }
     return {
       role: 'ai',
-      content: 'Adding an extra day opens up scenic alternatives. For example, if you take the route through Switzerland instead of the fastest path, you\'d see the Alps from your train window. Would you like me to reroute through Luzern or Innsbruck?',
+      content: 'Adding an extra day opens up scenic alternatives. For example, if you take the route through Switzerland instead of the fastest path, you\'d see the Alps from your train window. Would you like me to reroute through Zurich or Bern?',
       suggestions: ['Reroute through Switzerland', 'Keep the fast route', 'Show me both options'],
     };
   }
@@ -154,15 +154,15 @@ export function generateAIResponse(
   if (msg.includes('hiking') || msg.includes('walk') || msg.includes('outdoor') || msg.includes('alps')) {
     return {
       role: 'ai',
-      content: 'For hiking and outdoors, Innsbruck is unbeatable — you can take a cable car from the city center to alpine trails. Luzern offers Mt. Rigi, and Nice gives you the Calanques coastal hikes. Want me to add an outdoor stop?',
-      suggestions: ['Add Innsbruck', 'Add Luzern', 'Show outdoor options'],
+      content: 'For hiking and outdoors, Oslo has forests and fjord trails right at the city edge, Ljubljana sits under mountains with easy trail access, and Nice gives you the Calanques coastal hikes. Want me to add an outdoor stop?',
+      suggestions: ['Add Oslo', 'Add Ljubljana', 'Show outdoor options'],
     };
   }
 
   if (msg.includes('historic') || msg.includes('history') || msg.includes('old town') || msg.includes('castle')) {
     return {
       role: 'ai',
-      content: 'For history, Prague\'s Old Town is a living medieval museum, Rome has 2,000 years layered on every street, and Salzburg\'s fortress dominates the skyline. Want me to prioritize historic stops?',
+      content: 'For history, Prague\'s Old Town is a living medieval museum, Rome has 2,000 years layered on every street, and Athens\' Acropolis anchors Western civilization. Want me to prioritize historic stops?',
       suggestions: ['Add Prague', 'Add Rome', 'Prioritize historic cities'],
     };
   }
@@ -192,7 +192,7 @@ export function generateAIResponse(
     }
     return {
       role: 'ai',
-      content: 'Great question! The best stops depend on your interests. For a first trip, I\'d recommend cities with high stop ratings — Copenhagen, Berlin, Luzern, and Florence are all worth at least a night. Tell me what you enjoy and I\'ll tailor the stops.',
+      content: 'Great question! The best stops depend on your interests. For a first trip, I\'d recommend cities with high stop ratings — Copenhagen, Berlin, Budapest, and Florence are all worth at least a night. Tell me what you enjoy and I\'ll tailor the stops.',
       suggestions: ['I like scenery', 'I like history', 'I like food'],
     };
   }
