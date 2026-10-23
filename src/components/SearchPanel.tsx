@@ -202,7 +202,7 @@ export default function SearchPanel({ onStartSearch, onOpenMap, onOpenSlowTravel
     <div className="w-full max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <h1 className="font-display text-5xl md:text-6xl font-medium tracking-tight mb-4">
-          Discover Europe by Train
+          Discover Europe by <span className="text-[var(--color-secondary)]">Train</span>
         </h1>
         <p className="text-[var(--color-text-dim)] text-lg max-w-xl mx-auto">
           Find the best way to travel across Europe by train.
