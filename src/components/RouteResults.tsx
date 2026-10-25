@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { type Journey } from '@/data/cities';
 import { formatDuration } from '@/lib/routing';
-import { Clock, ArrowRight, Moon, Mountain, Train as TrainIcon, Wallet, X } from 'lucide-react';
+import { Clock, ArrowRight, Moon, Mountain, Train as TrainIcon, Wallet, X, Check } from 'lucide-react';
 
 interface RouteResultsProps {
   routes: Journey[];
@@ -36,14 +36,23 @@ export default function RouteResults({ routes, fromName, toName, onBack, onSelec
     <div className="w-full max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-[var(--color-text-dim)] hover:text-[var(--color-text)] mb-2 flex items-center gap-1">
-            <X className="w-4 h-4" /> New search
+          <button onClick={onBack} className="text-sm text-[var(--color-text-dim)] hover:text-[var(--color-text)] mb-3 flex items-center gap-1">
+            <X className="w-4 h-4" /> Back to search
           </button>
-          <h2 className="font-display text-3xl font-medium">
-            {fromName} <ArrowRight className="inline w-6 h-6 text-[var(--color-text-dim)]" /> {toName}
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold mb-2">Choose your route</p>
+          <h2 className="font-display text-4xl md:text-5xl font-medium">
+            {fromName} <ArrowRight className="inline w-7 h-7 text-[var(--color-primary)]" /> {toName}
           </h2>
-          <p className="text-[var(--color-text-dim)] mt-1">{routes.length} route{routes.length !== 1 ? 's' : ''} found</p>
+          <p className="text-[var(--color-text-dim)] mt-2">{routes.length} ways to make this journey · 8 days · 5 stops</p>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-5">
+        {['Best match', 'Fastest', 'Cheapest', 'Most scenic', 'Best stops'].map((filter, index) => (
+          <button key={filter} className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${index === 0 ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)]'}`}>
+            {index === 0 && <Check className="w-3 h-3 inline mr-1" />}{filter}
+          </button>
+        ))}
       </div>
 
       <div className="grid gap-4">
@@ -60,13 +69,14 @@ export default function RouteResults({ routes, fromName, toName, onBack, onSelec
               style={{ animationDelay: `${idx * 80}ms`, border: isSelected ? '1px solid var(--color-primary)' : undefined }}
             >
               <div className="flex items-start justify-between gap-4">
+                {idx === 0 && <span className="absolute ml-1 -mt-2 text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full bg-[var(--color-primary)] text-[var(--color-bg)]">Recommended</span>}
                 <div className="flex items-start gap-4 flex-1">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: style.bg }}>
                     <Icon className="w-5 h-5" style={{ color: style.color }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-lg">{route.title}</h3>
+                      <h3 className="font-semibold text-lg mt-2">{route.title}</h3>
                       {route.overnightCount > 0 && (
                         <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(245,166,35,0.15)', color: 'var(--color-accent)' }}>
                           Night train
@@ -151,9 +161,9 @@ export default function RouteResults({ routes, fromName, toName, onBack, onSelec
                   <div className="flex gap-3 mt-4">
                     <button
                       onClick={(e) => { e.stopPropagation(); onSelectRoute(route); }}
-                      className="flex-1 px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-bg)] font-semibold rounded-xl hover:bg-[var(--color-primary-dim)] transition-colors text-sm"
+                      className="flex-1 px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-bg)] font-semibold rounded-xl hover:bg-[var(--color-primary-dim)] transition-colors text-sm flex items-center justify-center gap-2"
                     >
-                      View stops & activities
+                      View journey <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { cityList, type City } from '@/data/cities';
-import { Search, ArrowRight, MapPin, Sparkles, Compass, X } from 'lucide-react';
+import { Search, ArrowRight, MapPin, Sparkles, Compass, X, CalendarDays, Users, SlidersHorizontal } from 'lucide-react';
 
 interface SearchPanelProps {
   onStartSearch: (from: string, to: string) => void;
@@ -199,18 +199,22 @@ export default function SearchPanel({ onStartSearch, onOpenMap, onOpenSlowTravel
   const [to, setTo] = useState('milan');
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="text-center mb-10">
-        <h1 className="font-display text-5xl md:text-6xl font-medium tracking-tight mb-4">
-          Discover Europe by <span className="text-[var(--color-secondary)]">Train</span>
-        </h1>
-        <p className="text-[var(--color-text-dim)] text-lg max-w-xl mx-auto">
-          Find the best way to travel across Europe by train.
-          Discover scenic routes, great stopovers and cities worth staying in.
-        </p>
+    <div className="w-full max-w-6xl mx-auto">
+      <div className="relative overflow-hidden rounded-[2rem] min-h-[540px] flex items-end mb-8 border border-white/10 shadow-2xl">
+        <img src="https://images.pexels.com/photos/38464651/pexels-photo-38464651.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Train crossing the Swiss Alps" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07151a] via-[#07151a]/55 to-[#07151a]/5" />
+        <div className="relative z-10 p-7 md:p-12 max-w-2xl">
+          <p className="text-xs uppercase tracking-[0.24em] text-[var(--color-primary)] font-semibold mb-4">Plan your train journey</p>
+          <h1 className="font-display text-5xl md:text-7xl font-medium tracking-tight leading-[0.95] mb-5">
+            Discover Europe<br />by <span className="text-[var(--color-primary)]">train</span>
+          </h1>
+          <p className="text-white/75 text-base md:text-lg max-w-xl leading-relaxed">
+            Find the best way to travel across Europe by train. Discover scenic routes, great stopovers and cities worth staying in.
+          </p>
+        </div>
       </div>
 
-      <div className="glass rounded-3xl p-6 md:p-8 shadow-2xl">
+      <div className="glass rounded-3xl p-5 md:p-7 shadow-2xl -mt-20 relative z-20">
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <CityCombobox
             label="From"
@@ -239,7 +243,22 @@ export default function SearchPanel({ onStartSearch, onOpenMap, onOpenSlowTravel
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[var(--color-border)]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+          <div className="rounded-xl bg-[var(--color-surface-2)] px-4 py-3 flex items-center gap-3">
+            <CalendarDays className="w-4 h-4 text-[var(--color-secondary)]" />
+            <div><div className="text-[10px] uppercase tracking-wider text-[var(--color-text-dim)]">Dates</div><div className="text-sm">12 Jul – 20 Jul 2025</div></div>
+          </div>
+          <div className="rounded-xl bg-[var(--color-surface-2)] px-4 py-3 flex items-center gap-3">
+            <Users className="w-4 h-4 text-[var(--color-primary)]" />
+            <div><div className="text-[10px] uppercase tracking-wider text-[var(--color-text-dim)]">Travellers</div><div className="text-sm">2 travellers</div></div>
+          </div>
+          <div className="rounded-xl bg-[var(--color-surface-2)] px-4 py-3 flex items-center gap-3">
+            <SlidersHorizontal className="w-4 h-4 text-[var(--color-accent)]" />
+            <div><div className="text-[10px] uppercase tracking-wider text-[var(--color-text-dim)]">Travel style</div><div className="text-sm">Economy</div></div>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 mt-5 pt-5 border-t border-[var(--color-border)]">
           <button
             onClick={() => onOpenMap(from)}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--color-surface-2)] rounded-xl text-sm text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"

@@ -2,7 +2,7 @@ import { useState, type ComponentType } from 'react';
 import { type Journey, type City } from '@/data/cities';
 import { formatDuration } from '@/lib/routing';
 import { getStopRecommendation } from '@/lib/ai';
-import { X, Moon, MapPin, Star, Bed, Camera, Utensils, Mountain, Building, Clock, Wallet, Train as TrainIcon, ArrowRight } from 'lucide-react';
+import { X, Moon, MapPin, Star, Bed, Camera, Utensils, Mountain, Building, Clock, Wallet, Train as TrainIcon, ArrowRight, Save, Share2, Sparkles } from 'lucide-react';
 
 interface JourneyDetailProps {
   route: Journey;
@@ -78,13 +78,18 @@ export default function JourneyDetail({ route, onBack }: JourneyDetailProps) {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-[var(--color-text-dim)] hover:text-[var(--color-text)] mb-2 flex items-center gap-1">
+          <button onClick={onBack} className="text-sm text-[var(--color-text-dim)] hover:text-[var(--color-text)] mb-3 flex items-center gap-1">
             <X className="w-4 h-4" /> Back to routes
           </button>
-          <h2 className="font-display text-3xl font-medium">{route.title}</h2>
-          <p className="text-[var(--color-text-dim)] mt-1">{route.description}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-primary)] font-semibold mb-2">Your journey</p>
+          <h2 className="font-display text-4xl md:text-5xl font-medium">{route.title}</h2>
+          <p className="text-[var(--color-text-dim)] mt-2">{route.stops.length} days · {route.transfers} stops · {formatDuration(route.totalDurationMin)} by train</p>
+        </div>
+        <div className="flex gap-2">
+          <button className="px-3 py-2 rounded-xl bg-[var(--color-primary)] text-[var(--color-bg)] text-sm font-semibold flex items-center gap-2"><Save className="w-4 h-4" /> Save trip</button>
+          <button aria-label="Share journey" className="p-2 rounded-xl bg-[var(--color-surface-2)] text-[var(--color-text-dim)]"><Share2 className="w-4 h-4" /></button>
         </div>
       </div>
 
@@ -113,6 +118,12 @@ export default function JourneyDetail({ route, onBack }: JourneyDetailProps) {
             <span className="text-sm">{route.scenicScore} scenic segments</span>
           </div>
         )}
+      </div>
+
+      <div className="glass rounded-2xl p-4 mb-6 flex items-center gap-3 text-sm">
+        <Sparkles className="w-4 h-4 text-[var(--color-accent)]" />
+        <span className="text-[var(--color-text-dim)]">AI suggestion</span>
+        <span>Add one more day in Lucerne for stunning lake views and a calmer journey.</span>
       </div>
 
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
